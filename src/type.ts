@@ -17,6 +17,7 @@ export interface Product {
   rating: number | null;
   reviewCount: number;
   imageUrl: string | null;
+  url: string | null;
 }
 
 export interface ScrapeResponse {

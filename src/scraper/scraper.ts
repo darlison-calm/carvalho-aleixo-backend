@@ -1,8 +1,8 @@
 import axios from "axios";
-import { SELECTORS, DEFAULT_CONFIG } from "../scrapperConstants";
 import { JSDOM } from 'jsdom';
-import type { Product, ScrapeResponse } from "../type";
 import { findElementBySelectors, extractRating, extractReviewCount, getAbsoluteUrl, findElementsBySelectors } from "../utils";
+import { SELECTORS, DEFAULT_CONFIG } from "./scrapperConstants";
+import type { Product, ScrapeResponse } from "../type";
 
 const axiosConfig = {
     headers: {
@@ -26,8 +26,13 @@ async function fetchAmazonSearchPage(keyword: string, config: typeof axiosConfig
 }
 
 function extractProductDetails(productElement: Element): Product | null {
-    const title = findElementBySelectors(productElement, SELECTORS.title)?.textContent?.trim();
+    const titleElement = findElementBySelectors(productElement, SELECTORS.title);
+    if (!titleElement) return null;
+    const title = titleElement.textContent?.trim();
     if (!title) return null;
+
+    const linkElement = titleElement.closest('a');
+    const url = linkElement ? getAbsoluteUrl(linkElement.href) : null;
 
     const ratingElement = findElementBySelectors(productElement, SELECTORS.rating);
     const ratingText = ratingElement?.getAttribute('aria-label') || ratingElement?.textContent || '';
@@ -41,17 +46,17 @@ function extractProductDetails(productElement: Element): Product | null {
     const imageSrc = imageElement?.src || imageElement?.getAttribute('data-src');
     const imageUrl = imageSrc && !imageSrc.includes('transparent-pixel') ? getAbsoluteUrl(imageSrc) : null;
 
-    if (rating !== null || reviewCount > 0 || imageUrl) {
+    if (rating !== null || reviewCount > 0 || imageUrl || url) {
         return {
             title,
             rating: rating ?? null,
             reviewCount: reviewCount ?? 0,
             imageUrl: imageUrl ?? null,
+            url: url ?? null,
         };
     }
     return null;
 }
-
 
 function parseProductsFromHtml(html: string, maxProducts: number): Product[] {
     const dom = new JSDOM(html);
