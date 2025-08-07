@@ -15,6 +15,13 @@ const axiosConfig = {
     }
 };
 
+/**
+ * Fetches the HTML content of an Amazon search page for a given keyword.
+ * @param keyword - The search term to query on Amazon
+ * @param config - Axios configuration with headers and timeout
+ * @returns The HTML content as a string
+ * @throws Error if the request fails
+ */
 async function fetchAmazonSearchPage(keyword: string, config: typeof axiosConfig): Promise<string> {
     const searchUrl = `https://www.amazon.com/s?k=${encodeURIComponent(keyword)}&ref=sr_pg_1`;
     try {
@@ -25,6 +32,11 @@ async function fetchAmazonSearchPage(keyword: string, config: typeof axiosConfig
     }
 }
 
+/**
+ * Extracts product details from a single product DOM element.
+ * @param productElement - The DOM element representing a product
+ * @returns A Product object or null if extraction fails
+ */
 function extractProductDetails(productElement: Element): Product | null {
     const titleElement = findElementBySelectors(productElement, SELECTORS.title);
     if (!titleElement) return null;
@@ -58,10 +70,17 @@ function extractProductDetails(productElement: Element): Product | null {
     return null;
 }
 
+/**
+ * Parses product data from Amazon search page HTML.
+ * @param html - The HTML content of the search page
+ * @param maxProducts - Maximum number of products to parse
+ * @returns Array of Product objects
+ */
 function parseProductsFromHtml(html: string, maxProducts: number): Product[] {
     const dom = new JSDOM(html);
     const document = dom.window.document;
 
+    // Find all product elements using selectors
     const productElements = findElementsBySelectors(document, SELECTORS.product);
     const products: Product[] = [];
 
@@ -79,6 +98,13 @@ function parseProductsFromHtml(html: string, maxProducts: number): Product[] {
     return products;
 }
 
+/**
+ * Scrapes Amazon product data for a given keyword.
+ * @param keyword - The search term to query on Amazon
+ * @param config - Optional configuration to override defaults
+ * @returns A ScrapeResponse object with product data
+ * @throws Error if scraping fails
+ */
 export async function scrapeAmazonProducts(keyword: string, config = {}): Promise<ScrapeResponse> {
     const mergedConfig = { ...DEFAULT_CONFIG, ...config };
     const requestConfig = {
@@ -88,6 +114,7 @@ export async function scrapeAmazonProducts(keyword: string, config = {}): Promis
     };
 
     try {
+        // Fetch HTML and parse products
         const html = await fetchAmazonSearchPage(keyword, requestConfig);
         const products = parseProductsFromHtml(html, mergedConfig.maxProducts!);
         return {
