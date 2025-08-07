@@ -1,10 +1,11 @@
+// Extract rating from text (e.g., "4.5 out of 5")
 export function extractRating(ratingText: string): number | null {
     if (!ratingText) return null;
-
     const match = ratingText.match(/(\d+[.,]\d+|\d+)/);
     return match ? parseFloat(match[1]!.replace(',', '.')) : null;
 }
 
+// Extract review count from text
 export function extractReviewCount(reviewText: string): number {
     if (!reviewText) return 0;
 
@@ -19,7 +20,7 @@ export function getAbsoluteUrl(url: string | null, baseUrl = 'https://www.amazon
     if (url.startsWith('/')) return baseUrl + url;
     return baseUrl + '/' + url;
 }
-
+// Find multiple elements using a list of selectors
 export function findElementsBySelectors(parent: Document | Element, selectors: string[]): Element[] {
     for (const selector of selectors) {
         const elements = Array.from(parent.querySelectorAll(selector));
@@ -30,6 +31,7 @@ export function findElementsBySelectors(parent: Document | Element, selectors: s
     return [];
 }
 
+// Find a single element by multiple selectors
 export function findElementBySelectors(parent: Element, selectors: string[]): Element | null {
     for (const selector of selectors) {
         const element = parent.querySelector(selector);
