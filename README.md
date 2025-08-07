@@ -10,14 +10,14 @@ This project is a TypeScript-based Express API that scrapes product data from Am
 - Modularized codebase with TypeScript for type safety.
 
 ## Prerequisites
-- **Bun**: Version 1.0 or higher (JavaScript runtime).
+- **Bun**: JavaScript runtime.
 - **TypeScript**: Installed globally or as a dev dependency (included in `package.json`).
 
 ## Installation
 1. Clone the repository or copy the project files to your local machine.
    ```bash
    git clone <repository-url>
-   cd amazon-scraper
+   cd carvalho-aleixo-backend
    ```
 2. Install dependencies using Bun:
    ```bash
@@ -29,7 +29,7 @@ This project is a TypeScript-based Express API that scrapes product data from Am
    ├── src/
    │   ├── scraper/
    │   │   ├── scraper.ts
-   │   │   └── constants.ts
+   │   │   └── scrapperConstants.ts
    │   ├── types/
    │   │   └── types.ts
    │   ├── utils/
@@ -121,5 +121,4 @@ The API provides a single endpoint: `GET /api/scrape`.
 - `axios`: HTTP client for fetching Amazon pages.
 - `jsdom`: DOM parser for HTML processing.
 - `cors`: Enables cross-origin requests.
-- TypeScript types: `@types/express`, `@types/jsdom`, `@types/node`.
 ```
